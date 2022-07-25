@@ -1,17 +1,30 @@
 const express = require("express");
+const bodyParser = require("body-parser");
 const app = express();
-
+var items = [];
+app.set('view engine', 'ejs');
+app.use(bodyParser.urlencoded({extended: true}));
 app.get("/", function(req, res){
-    res.send("<h1> hello world </h1>");
+    var today = new Date();
+
+    var options = {
+        weekday: "long",
+        day: "numeric",
+        month: "long"
+    };
+
+    var day = today.toLocaleDateString("en-US", options);
+
+    res.render("list", {
+        kindofday: day, itemName: items
+    });
 });
 
-app.get("/about", function(req, res){
-    res.send("<h1> its joel matafaka </h1>");
-});
-
-app.get("/contact", function(req, res){
-    res.send("<h1> joelmathewv0819@gmail.com </h1>");
-});
+app.post("/",function(req, res){
+    var item = req.body.newItem;
+    items.push(item);
+    res.redirect("/");
+} );
 
 app.listen(3000, function(){
     console.log("server started on port 3000");
